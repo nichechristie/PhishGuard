@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhishGuard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .tagline {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .status-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .status-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-label {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .status-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .risk-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .risk-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .risk-safe { background: #4CAF50; }
+    .risk-low { background: #2196F3; }
+    .risk-medium { background: #FFC107; color: #000; }
+    .risk-high { background: #FF9800; }
+    .risk-critical { background: #f44336; }
+
+    .current-site {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .site-url {
+      font-size: 12px;
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+
+    .indicators {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .indicators li {
+      margin-left: 20px;
+      margin-bottom: 5px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 10px;
+    }
+
+    .button-primary {
+      background: #fff;
+      color: #667eea;
+    }
+
+    .button-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .button-secondary:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 15px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🛡️</div>
+      <h1>PhishGuard</h1>
+      <div class="tagline">Real Phishing Protection</div>
+    </div>
+
+    <div id="loading" class="loading">
+      Analyzing current page...
+    </div>
+
+    <div id="content" class="hidden">
+      <div class="status-card">
+        <div class="status-row">
+          <span class="status-label">Current Page:</span>
+          <div class="risk-indicator">
+            <div id="risk-icon" class="risk-icon"></div>
+            <span id="risk-level" class="status-value"></span>
+          </div>
+        </div>
+        <div class="status-row">
+          <span class="status-label">Risk Score:</span>
+          <span id="risk-score" class="status-value"></span>
+        </div>
+      </div>
+
+      <div class="current-site">
+        <div class="site-url" id="current-url"></div>
+        <div class="indicators">
+          <ul id="indicators-list"></ul>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat-box">
+          <div id="total-threats" class="stat-number">---</div>
+          <div class="stat-label">Known Threats</div>
+        </div>
+        <div class="stat-box">
+          <div id="last-update" class="stat-number">---</div>
+          <div class="stat-label">Hours Ago</div>
+        </div>
+      </div>
+
+      <button id="btn-check" class="button button-primary">
+        🔍 Check Another URL
+      </button>
+
+      <button id="btn-update" class="button button-secondary">
+        🔄 Update Threat Database
+      </button>
+
+      <button id="btn-learn" class="button button-secondary">
+        🎓 Learn About Phishing
+      </button>
+    </div>
+
+    <div class="footer">
+      v1.0.0 | Protected by live threat intelligence
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

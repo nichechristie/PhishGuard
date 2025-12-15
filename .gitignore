@@ -1,0 +1,12 @@
+# Test files
+popup_test.html
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
